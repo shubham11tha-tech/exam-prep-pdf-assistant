@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: exam-prep-pdf-backend
+    env: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn --chdir rag_chatbot rag_chatbot.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DJANGO_SECRETE_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: GOOGLE_API_KEY
+        sync: false
