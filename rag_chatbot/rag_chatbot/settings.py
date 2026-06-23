@@ -1,0 +1,196 @@
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
+# Quick-start development settings - unsload_dotenvuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGO_SECRETE_KEY', '')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','rag-fx2h.onrender.com']
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'corsheaders',
+    'chatbot',
+    'rest_framework_simplejwt',
+]
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'rag_chatbot.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'rag_chatbot.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+import dj_database_url
+
+
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get('DATABASE_URL')
+#     )
+# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# Simple JWT configuration (adjust lifetimes as needed)
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+# Password validation
+# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.2/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
+
+STATIC_URL = 'static/'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Media files for uploads
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Chroma persistence directory
+CHROMA_PERSIST_DIR = os.path.join(BASE_DIR, 'chroma')
+
+# RAG configuration
+# Provider can be 'openai' or 'huggingface'. Default huggingface.
+RAG_EMBEDDINGS_PROVIDER = os.environ.get('RAG_EMBEDDINGS_PROVIDER', 'huggingface')
+RAG_HF_MODEL_NAME = os.environ.get('RAG_HF_MODEL_NAME', 'sentence-transformers/all-MiniLM-L6-v2')
+
+# LLM for generation
+RAG_LLM_PROVIDER = os.environ.get('RAG_LLM_PROVIDER', 'huggingface')
+RAG_OPENAI_MODEL = os.environ.get('RAG_OPENAI_MODEL', 'gpt-4o-mini')
+RAG_HF_LLM_MODEL_NAME = os.environ.get('RAG_HF_LLM_MODEL_NAME', 'google/flan-t5-base')
+RAG_LLM_MAX_TOKENS = int(os.environ.get('RAG_LLM_MAX_TOKENS', '512'))
+
+# Explicit Gemini model to use for generation
+RAG_LLM_MODEL = os.environ.get('RAG_LLM_MODEL', 'gemini-2.5-flash')
+
+# Gemini API key
+load_dotenv()
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+# Retrieval and ranking knobs
+RAG_FETCH_K = int(os.environ.get('RAG_FETCH_K', '20'))
+RAG_SCORE_THRESHOLD = float(os.environ.get('RAG_SCORE_THRESHOLD', '0.2'))
+
+# CORS settings
+# Allow during development from local frontends; tighten in production
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://rag-chatbot-1072.vercel.app'
+]
+
+# If you need cookies/Authorization headers across origins
+CORS_ALLOW_CREDENTIALS = True

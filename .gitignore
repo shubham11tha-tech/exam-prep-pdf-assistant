@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+.env
+.venv/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+test_files/
+
+# Django
+*.log
+staticfiles/
+
+# SQLite database (dev)
+rag_chatbot/db.sqlite3
+
+# Uploaded media (dev)
+rag_chatbot/media/
+
+# Chroma vector store data
+rag_chatbot/chroma/
+
+# Local settings
+*.local
